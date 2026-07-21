@@ -1,6 +1,6 @@
 # ==============================================================================
 # PROJECT: ENTERPRISE CUSTOMER INTELLIGENCE & REVENUE ENGINE
-# FILE: app.py (ADVANCED SPACE HUD - MAXIMUM GLOW INTENSITY)
+# FILE: app.py (FULL ORIGINAL UI + DYNAMIC SENSITIVITY SLIDER FIX)
 # ==============================================================================
 
 import streamlit as st
@@ -19,7 +19,6 @@ st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght=400;600;800;900&family=Space+Grotesk:wght=400;600;700&display=swap');
 
-    /* Keyframes for Deep Space Background & Smooth Shine Sweeps */
     @keyframes deepSpacePulse {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
@@ -37,7 +36,6 @@ st.markdown("""
         100% { left: 150%; }
     }
 
-    /* MAXIMUM NEON INTENSITY PULSE */
     @keyframes neonPulseGlow {
         0% { 
             box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.2), 
@@ -56,7 +54,6 @@ st.markdown("""
         }
     }
 
-    /* Cosmic Void Deep Background */
     .stApp {
         background: radial-gradient(circle at 50% 40%, #0a0b10 0%, #050508 60%, #020204 100%),
                     linear-gradient(135deg, rgba(26, 11, 46, 0.4) 0%, rgba(10, 25, 47, 0.4) 100%) !important;
@@ -66,7 +63,6 @@ st.markdown("""
         font-family: 'Space Grotesk', system-ui, sans-serif;
     }
     
-    /* Premium Glassmorphic Navigation Panels */
     .glass-card {
         position: relative;
         background: linear-gradient(145deg, rgba(13, 17, 28, 0.85) 0%, rgba(5, 6, 10, 0.98) 100%);
@@ -105,7 +101,6 @@ st.markdown("""
         transform: translateY(-4px) scale(1.001);
     }
 
-    /* --- ANIMATED DROPDOWN & INPUTS DESIGN WITH INTENSE GLOW --- */
     div[data-baseweb="input"], 
     div[data-baseweb="select"], 
     .stSelectbox div[role="button"],
@@ -123,7 +118,6 @@ st.markdown("""
         z-index: 1;
     }
 
-    /* High Intensity Hyper Glowing States */
     div[data-baseweb="input"]:hover, 
     div[data-baseweb="select"]:hover, 
     .stSelectbox div[role="button"]:hover, 
@@ -136,24 +130,15 @@ st.markdown("""
         transform: scale(1.015);
     }
 
-    /* ==============================================================================
-       STREAMLIT SLIDER CUSTOMIZATION (ELECTRIC BLUE THEME FIX)
-       ============================================================================== */
-    /* Active Track Bar (Replaces Default Red Line with Electric Blue) */
+    /* SLIDER ELECTRIC BLUE FIX */
     div[data-baseweb="slider"] div[role="slider"] {
         background-color: #00f0ff !important;
         border: 2px solid #ffffff !important;
         box-shadow: 0 0 15px #00f0ff, 0 0 30px #9d00ff !important;
     }
     
-    /* Active Line Highlight Fill */
     div[data-baseweb="slider"] div[style*="background-color: rgb"] {
         background: linear-gradient(90deg, #9d00ff 0%, #00f0ff 100%) !important;
-    }
-    
-    /* Native Streamlit slider line element overrides */
-    .stSlider [data-baseweb="slider"] div {
-        background-color: transparent !important;
     }
 
     .stTextInput input, .stNumberInput input {
@@ -169,7 +154,6 @@ st.markdown("""
         display: none !important;
     }
 
-    /* Titles & Heads */
     .glow-title {
         font-family: 'Orbitron', sans-serif;
         background: linear-gradient(90deg, #00f0ff 0%, #9d00ff 50%, #00ff66 100%);
@@ -190,7 +174,6 @@ st.markdown("""
         letter-spacing: 2px;
     }
 
-    /* Core Navigation Tabs Bar */
     div[data-testid="stTabBar"] {
         background: rgba(5, 6, 10, 0.95) !important;
         border: 1px solid rgba(157, 0, 255, 0.3) !important;
@@ -210,7 +193,6 @@ st.markdown("""
         box-shadow: 0 0 25px rgba(0, 240, 255, 0.5) !important;
     }
 
-    /* Action Ignition Buttons */
     .stButton>button {
         position: relative !important;
         overflow: hidden !important;
@@ -240,7 +222,6 @@ st.markdown("""
         box-shadow: 0 0 50px rgba(0, 240, 255, 0.8) !important;
     }
 
-    /* Status Badges Capsules */
     .status-capsule {
         padding: 18px;
         border-radius: 12px;
@@ -251,7 +232,6 @@ st.markdown("""
         box-shadow: 0 12px 30px rgba(0,0,0,0.8);
     }
 
-    /* System Telemetry Grid Items */
     .telemetry-node {
         background: rgba(10, 13, 22, 0.8);
         border: 1px solid rgba(255,255,255,0.05);
@@ -263,7 +243,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- PIPELINE RESOURCING ENGINE ---
+# PIPELINE RESOURCING ENGINE
 @st.cache_resource
 def load_saved_pipeline():
     pipeline = {}
@@ -279,12 +259,13 @@ def load_saved_pipeline():
 
 pipeline = load_saved_pipeline()
 
+# Session State Persistence
 if 'prediction_history' not in st.session_state:
     st.session_state.prediction_history = []
+if 'current_eval' not in st.session_state:
+    st.session_state.current_eval = None
 
-# ==============================================================================
-# UPGRADED SIDEBAR INTEGRATION PANEL
-# ==============================================================================
+# SIDEBAR INTEGRATION PANEL
 st.sidebar.markdown('<h2 class="glow-title">⚙️ DECK TERMINAL</h2>', unsafe_allow_html=True)
 
 st.sidebar.markdown("<p class='radar-head' style='font-size:0.85rem; margin-bottom:5px;'>Currency Configuration</p>", unsafe_allow_html=True)
@@ -313,12 +294,12 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# --- MAIN DASHBOARD INTERFACE HEADER ---
+# MAIN DASHBOARD INTERFACE HEADER
 st.markdown('<h1 class="glow-title">🌌 Enterprise Customer Analytics Command Deck</h1>', unsafe_allow_html=True)
 st.markdown("<p style='color:#94a3b8; font-weight:600;'>Process localized multi-currency data pipelines, automated clustering matrices, and cross-selling workflows.</p>", unsafe_allow_html=True)
 st.write("---")
 
-# NEW ENTERPRISE CORE KPI CARDS
+# ENTERPRISE CORE KPI CARDS
 kpi1, kpi2, kpi3 = st.columns(3)
 with kpi1:
     st.markdown('<div class="glass-card" style="padding:15px 25px;"><span style="color:#94a3b8; font-size:0.85rem; font-weight:700; text-transform:uppercase;">Tracked Profiles</span><h2 style="margin:5px 0 0 0; font-family:\'Orbitron\'; color:#00f0ff;">14,842</h2></div>', unsafe_allow_html=True)
@@ -355,40 +336,48 @@ with tab1:
         run_scan = st.button("🔥 RUN SYSTEMS DIAGNOSTIC SCANNERS")
         st.markdown('</div>', unsafe_allow_html=True)
 
-    with right_panel:
-        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        st.markdown('<h3 class="glow-title" style="font-size:1.3rem; margin-top:0;">📊 Dynamic Boundary Analysis</h3>', unsafe_allow_html=True)
-        
-        if run_scan:
-            with st.spinner("Processing parameter profiles..."):
-                time.sleep(0.3) 
-            
-            real_prediction = 0
-            real_churn_risk = 0.0
-            
-            if 'prediction_engine' in pipeline:
-                input_df = pd.DataFrame([[recency_input, frequency_input, monetary_in_gbp]], columns=['Recency', 'Frequency', 'Monetary_GBP'])
-                try:
-                    real_probabilities = pipeline['prediction_engine'].predict_proba(input_df)[0]
-                    real_churn_risk = float(real_probabilities[1] * 100)
-                except Exception:
-                    # Multi-feature balanced fallback formula
-                    rec_score = (recency_input / 365.0) * 60.0
-                    freq_score = max(0.0, (1.0 - (frequency_input / 50.0)) * 25.0)
-                    mon_score = max(0.0, (1.0 - (monetary_in_gbp / 500.0)) * 15.0)
-                    real_churn_risk = float(np.clip(rec_score + freq_score + mon_score, 2.0, 98.0))
-            else:
+    # Process assessment state
+    if run_scan:
+        real_churn_risk = 0.0
+        if 'prediction_engine' in pipeline:
+            input_df = pd.DataFrame([[recency_input, frequency_input, monetary_in_gbp]], columns=['Recency', 'Frequency', 'Monetary_GBP'])
+            try:
+                real_probabilities = pipeline['prediction_engine'].predict_proba(input_df)[0]
+                real_churn_risk = float(real_probabilities[1] * 100)
+            except Exception:
                 rec_score = (recency_input / 365.0) * 60.0
                 freq_score = max(0.0, (1.0 - (frequency_input / 50.0)) * 25.0)
                 mon_score = max(0.0, (1.0 - (monetary_in_gbp / 500.0)) * 15.0)
                 real_churn_risk = float(np.clip(rec_score + freq_score + mon_score, 2.0, 98.0))
+        else:
+            rec_score = (recency_input / 365.0) * 60.0
+            freq_score = max(0.0, (1.0 - (frequency_input / 50.0)) * 25.0)
+            mon_score = max(0.0, (1.0 - (monetary_in_gbp / 500.0)) * 15.0)
+            real_churn_risk = float(np.clip(rec_score + freq_score + mon_score, 2.0, 98.0))
 
-            # Map prediction using dynamic sidebar threshold
-            real_prediction = 1 if real_churn_risk >= sensitivity_threshold else 0
+        st.session_state.current_eval = {
+            'recency': recency_input,
+            'frequency': frequency_input,
+            'monetary_gbp': monetary_in_gbp,
+            'monetary_raw': monetary_input,
+            'currency_mode': currency_mode,
+            'churn_risk': real_churn_risk
+        }
+
+    with right_panel:
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        st.markdown('<h3 class="glow-title" style="font-size:1.3rem; margin-top:0;">📊 Dynamic Boundary Analysis</h3>', unsafe_allow_html=True)
+        
+        if st.session_state.current_eval is not None:
+            eval_data = st.session_state.current_eval
+            churn_risk = eval_data['churn_risk']
+            
+            # Dynamic linking with sidebar slider
+            is_churn_verdict = 1 if churn_risk >= sensitivity_threshold else 0
 
             # Dynamic Radar Mapping
-            before_metrics = [min((recency_input / 365) * 100, 100), min((frequency_input / 50) * 100, 100), min((monetary_in_gbp / 500) * 100, 100)]
-            after_metrics = [real_churn_risk, max(100 - real_churn_risk, 15), 94.2]
+            before_metrics = [min((eval_data['recency'] / 365) * 100, 100), min((eval_data['frequency'] / 50) * 100, 100), min((eval_data['monetary_gbp'] / 500) * 100, 100)]
+            after_metrics = [churn_risk, max(100 - churn_risk, 15), 94.2]
             radar_categories = ['Inactivity Threshold Rate', 'Retention Probability Index', 'Core Alignment Factor']
             
             fig = go.Figure()
@@ -401,14 +390,18 @@ with tab1:
             st.plotly_chart(fig, use_container_width=True)
             
             # Classification Segmentation Output
-            if monetary_in_gbp >= 150.0 or (monetary_in_gbp >= 80.0 and frequency_input >= 25):
+            m_gbp = eval_data['monetary_gbp']
+            freq = eval_data['frequency']
+            rec = eval_data['recency']
+
+            if m_gbp >= 150.0 or (m_gbp >= 80.0 and freq >= 25):
                 segment_verdict, segment_bg, segment_color = "💎 Premium Enterprise Account", "rgba(0, 255, 102, 0.15)", "#00ff66"
-            elif monetary_in_gbp <= 25.0 or frequency_input <= 4 or recency_input >= 120:
+            elif m_gbp <= 25.0 or freq <= 4 or rec >= 120:
                 segment_verdict, segment_bg, segment_color = "📉 Low Engagement Attrition Risk", "rgba(157, 0, 255, 0.15)", "#9d00ff"
             else:
                 segment_verdict, segment_bg, segment_color = "🔄 Mid Tier Enterprise Standard", "rgba(0, 240, 255, 0.15)", "#00f0ff"
                 
-            if real_prediction == 1:
+            if is_churn_verdict == 1:
                 champion_verdict, champion_color, champion_bg = "⚠️ High Churn Volatility Vector", "#00f0ff", "rgba(0, 240, 255, 0.18)"
             else:
                 champion_verdict, champion_color, champion_bg = "✅ Secure Active Retention Asset", "#00ff66", "rgba(0, 255, 102, 0.18)"
@@ -421,15 +414,16 @@ with tab1:
             with c2:
                 st.markdown('<p class="radar-head">🔮 Operational Verdict Matrix:</p>', unsafe_allow_html=True)
                 st.markdown(f'<div class="status-capsule" style="background:{champion_bg}; color:{champion_color}; border: 1px solid {champion_color}; box-shadow: 0 0 20px {champion_color}30;">{champion_verdict}</div>', unsafe_allow_html=True)
-            
-            st.session_state.prediction_history.insert(0, {
-                "Timestamp Registry": time.strftime("%H:%M:%S"),
-                "Recency Value": f"{recency_input} days",
-                "Order Frequency": f"{frequency_input} transactions",
-                "Monetary Capital": f"Rs. {monetary_input:,.0f}" if currency_mode == "Pakistani Rupee (PKR)" else f"$ {monetary_input:,.1f}",
-                "Classification Cluster": segment_verdict,
-                "Diagnostic Verdict": champion_verdict
-            })
+
+            if run_scan:
+                st.session_state.prediction_history.insert(0, {
+                    "Timestamp Registry": time.strftime("%H:%M:%S"),
+                    "Recency Value": f"{rec} days",
+                    "Order Frequency": f"{freq} transactions",
+                    "Monetary Capital": f"Rs. {eval_data['monetary_raw']:,.0f}" if eval_data['currency_mode'] == "Pakistani Rupee (PKR)" else f"$ {eval_data['monetary_raw']:,.1f}",
+                    "Classification Cluster": segment_verdict,
+                    "Diagnostic Verdict": champion_verdict
+                })
         else:
             st.info("System Engine Ready. Feed telemetry parameters into the left input cockpit vector deck.")
         st.markdown('</div>', unsafe_allow_html=True)
