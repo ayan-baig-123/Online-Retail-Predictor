@@ -371,11 +371,43 @@ with tab1:
     if run_scan:
         real_churn_risk = 0.0
         if 'prediction_engine' in pipeline:
-            input_df = pd.DataFrame([[recency_input, frequency_input, monetary_in_gbp]], columns=['Recency', 'Frequency', 'Monetary_GBP'])
+            model = pipeline['prediction_engine']
+            
+            # Map potential feature variations to input values
+            raw_input_dict = {
+                'Recency': recency_input,
+                'recency': recency_input,
+                'Frequency': frequency_input,
+                'frequency': frequency_input,
+                'Monetary': monetary_in_gbp,
+                'monetary': monetary_in_gbp,
+                'Monetary_GBP': monetary_in_gbp,
+                'monetary_gbp': monetary_in_gbp,
+                'Monetary_Value': monetary_input
+            }
+            
             try:
-                real_probabilities = pipeline['prediction_engine'].predict_proba(input_df)[0]
-                real_churn_risk = float(real_probabilities[1] * 100)
-            except Exception:
+                # Automatic Feature Detection and Alignment Logic
+                if hasattr(model, 'feature_names_in_'):
+                    expected_features = model.feature_names_in_
+                    input_data = {feat: [raw_input_dict.get(feat, 0)] for feat in expected_features}
+                    input_df = pd.DataFrame(input_data)
+                elif hasattr(model, 'named_steps'):
+                    input_df = pd.DataFrame([[recency_input, frequency_input, monetary_in_gbp]], columns=['Recency', 'Frequency', 'Monetary_GBP'])
+                else:
+                    input_df = pd.DataFrame([[recency_input, frequency_input, monetary_in_gbp]], columns=['Recency', 'Frequency', 'Monetary_GBP'])
+
+                real_probabilities = model.predict_proba(input_df)[0]
+                
+                # Check target class indexing safely
+                if hasattr(model, 'classes_') and 1 in model.classes_:
+                    churn_class_idx = list(model.classes_).index(1)
+                    real_churn_risk = float(real_probabilities[churn_class_idx] * 100)
+                else:
+                    real_churn_risk = float(real_probabilities[-1] * 100)
+
+            except Exception as e:
+                # Dynamic Fallback Calculation
                 rec_score = (recency_input / 365.0) * 60.0
                 freq_score = max(0.0, (1.0 - (frequency_input / 50.0)) * 25.0)
                 mon_score = max(0.0, (1.0 - (monetary_in_gbp / 500.0)) * 15.0)
