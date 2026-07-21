@@ -1,6 +1,6 @@
 # ==============================================================================
 # PROJECT: ENTERPRISE CUSTOMER INTELLIGENCE & REVENUE ENGINE
-# FILE: app.py (HIGH-PERFORMANCE CYBERPUNK HUD EDITION)
+# FILE: app.py (HIGH-PERFORMANCE CYBERPUNK HUD EDITION - FIXED)
 # ==============================================================================
 
 import streamlit as st
@@ -272,14 +272,16 @@ def load_saved_pipeline():
         try:
             with open('best_churn_model.pkl', 'rb') as f: 
                 pipeline['prediction_engine'] = pickle.load(f)
-        except Exception: 
-            pass
+        except Exception as e: 
+            st.error(f"Error loading best_churn_model.pkl: {e}")
+            
     if os.path.exists('recommendation_rules.pkl'):
         try:
             with open('recommendation_rules.pkl', 'rb') as f: 
                 pipeline['affinity_engine'] = pickle.load(f)
-        except Exception: 
-            pass
+        except Exception as e: 
+            st.error(f"Error loading recommendation_rules.pkl: {e}")
+            
     return pipeline
 
 pipeline = load_saved_pipeline()
@@ -449,7 +451,9 @@ with tab1:
                 polar=dict(radialaxis=dict(visible=True, range=[0, 100], gridcolor='rgba(255,255,255,0.05)'), angularaxis=dict(gridcolor='rgba(255,255,255,0.05)')),
                 template='plotly_dark', paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)', height=320, margin=dict(l=40, r=40, t=30, b=30), showlegend=True
             )
-            st.plotly_chart(fig, use_container_width=True)
+            
+            # FIXED DEPRECATION WARNING: use_container_width -> width="stretch"
+            st.plotly_chart(fig, width="stretch")
             
             # Segment mapping
             m_gbp = eval_data['monetary_gbp']
@@ -495,7 +499,8 @@ with tab1:
     st.markdown('<div class="glass-card">', unsafe_allow_html=True)
     st.markdown('<h3 class="glow-title" style="font-size:1.3rem; margin-top:0;">📜 Historic Analytics Ingestion Stream Logs</h3>', unsafe_allow_html=True)
     if st.session_state.prediction_history:
-        st.dataframe(pd.DataFrame(st.session_state.prediction_history), use_container_width=True, hide_index=True)
+        # FIXED DEPRECATION WARNING: use_container_width -> width="stretch"
+        st.dataframe(pd.DataFrame(st.session_state.prediction_history), width="stretch", hide_index=True)
     else:
         st.text("No localized profile matrix computations logged in this computing window cycle yet.")
     st.markdown('</div>', unsafe_allow_html=True)
@@ -510,8 +515,8 @@ with tab2:
     
     if 'affinity_engine' in pipeline:
         rules_df = pipeline['affinity_engine']
-        rules_df['Antecedent_Str'] = rules_df['antecedents'].apply(lambda x: list(x)[0])
-        rules_df['Consequent_Str'] = rules_df['consequents'].apply(lambda x: list(x)[0])
+        rules_df['Antecedent_Str'] = rules_df['antecedents'].apply(lambda x: list(x)[0] if isinstance(x, (set, list, frozenset)) else str(x))
+        rules_df['Consequent_Str'] = rules_df['consequents'].apply(lambda x: list(x)[0] if isinstance(x, (set, list, frozenset)) else str(x))
         unique_items = sorted(rules_df['Antecedent_Str'].unique())
         
         selected_product = st.selectbox("Anchor Product Selection Vector:", unique_items)
@@ -532,4 +537,3 @@ with tab2:
     else:
         st.warning("⚠️ Cross-sale recommendation network component references unavailable.")
     st.markdown('</div>', unsafe_allow_html=True)
-    
